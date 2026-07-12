@@ -1,3 +1,5 @@
+const { trace } = require("node:console")
+
 const socket = io()
 
 const nameInput = document.getElementById("nameInput")
@@ -9,6 +11,7 @@ const localStatus = document.getElementById("localStatus")
 const remoteStatus = document.getElementById("remoteStatus")
 const localVideo = document.getElementById("localVideo")
 const remoteVideo = document.getElementById("remoteVideo")
+const leaveBtn = document.getElementById("leaveBtn")
 
 let nickname = ""
 let roomId = ""
@@ -45,6 +48,7 @@ async function startMedia() {
     } catch (error) {
         console.log("마이크, 카메라 오류: ", error)
         alert("카메라와 마이크 권한을 허용해주세요")
+        return false
     }
 }
 
@@ -135,8 +139,13 @@ joinBtn.addEventListener("click", async() => {
         alert("닉네임과 방 번호를 모두 입력하세요")
         return
     }
-    //카메라 화면 화면에 출력
-    await startMedia()
+    //카메라, 마이크가 작동이 되면 방 입장/화면에 출력
+    const mediaSuccess = await startMedia()
+    if(!mediaSuccess) return
+
+    document.querySelector(".join_room").computedStyleMap.display = "none"
+    document.querySelector(".video_section").classList.add("active_flex")
+
     // 카메라화면이 출력되고 미디어파이프 시작
     startPose(localVideo)
 
@@ -151,6 +160,41 @@ joinBtn.addEventListener("click", async() => {
 
     console.log("방 입장: ", roomId, nickname)
 })
+
+
+// 방이 꽉 찻을 때
+socket.on("room_full", () => {
+    alert("방이 다 찼습니다")
+    // 메인화면으로 강제로 되돌아감
+    window.location.href = "/"
+})
+
+
+// 나가기 버튼 누르기(내가)
+if(leaveBtn) {
+    leaveBtn.addEventListener("click", () => {
+        if(roomId) {
+            socket.emit("leave_room", {roomId})
+        }
+        window.location.href = "/"
+    })
+}
+
+
+// 나가기 버튼 누르기(상대가)
+socket.on("user_disconnected", () => {
+    if(romoteVideo.srcObject) {
+        remoteVideo.srcObject.getTracks().forEach(track => track.stop())
+        remoteVideo.srcObject = null
+    }
+
+    if(peerConnection) {
+        peerConnection.close()
+    }
+    otherVideo.innerText = "상대"
+    remoteStatus.innerText = "상대방이 퇴장했습니다"
+})
+
 
 
 // peer-joined 받기 (상대방 입장 감지)

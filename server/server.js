@@ -16,6 +16,7 @@ const server = http.createServer(app)
 const io = new Server(server)
 
 
+
 // public 폴더 열기
 app.use(express.static(path.join(__dirname, "../public")))
 
@@ -28,8 +29,17 @@ io.on("connection", (socket) => {
 
     // 방 입장
     socket.on("join_room", ({ roomId, nickname }) => {
+        const room = io.sockets.adapter.rooms.get(roomId)
+        const userCount = room ? room.size: 0
+
+        if(userCount >= 2) {
+            socket.emit("room_full")
+            return
+        }
 
         socket.join(roomId)
+        socket.roomId = roomId
+        socket.nickname = nickname
 
         console.log(`${nickname}님이 ${roomId}번 방에 입장했습니다`)
 
@@ -40,6 +50,13 @@ io.on("connection", (socket) => {
         })
     })
 
+
+    // 나가기 버튼 누르기
+    socket.on("leave_room", ({roomId}) => {
+        socket.leave(roomId)
+        socket.to(roomId).emit("user_disconnected")
+        console.log("사용자가 방을 나갔습니다")
+    })
 
     // offer 전달(A -> server -> B) 
     // P2P가 직접 이루어지기 직전 징검다리 역할
@@ -76,9 +93,13 @@ io.on("connection", (socket) => {
     })
 
 
+
     // 사용자 퇴장
     socket.on("disconnect", () => {
         console.log("사용자 퇴장:", socket.id)
+        if(socket.roomId) {
+            socket.to(socket.roomId).emit("user_disconnected")
+        }
     })
 
 })
@@ -88,6 +109,8 @@ io.on("connection", (socket) => {
 
 
 // 서버 실행
+const PORT = process.env.PORT || 3000
+
 server.listen(3000, "0.0.0.0", () => {
     console.log("서버 실행 중...")
 })
