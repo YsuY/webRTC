@@ -143,6 +143,7 @@ joinBtn.addEventListener("click", async() => {
     const mediaSuccess = await startMedia()
     if(!mediaSuccess) return
 
+    console.log("여기 진입")
     document.querySelector(".join_room").style.display = "none"
     document.querySelector(".video_section").classList.add("active_flex")
     console.log("화면 전환 완료")
