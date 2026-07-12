@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1 화상통화</title>
+</head>
+<!-- // 주소 : 미디어파이프 공식사이트 -> jsDelivr(CDN 사이트)에 나와있는 공식 주소
+    // 미디어파이프 엔진(사람 자세를 분석하는 기능을 가진 라이브러리)
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+    // 카메라 영상을 계속 미디어파이프에 보내주는 도우미
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script> -->
+
+<body>
+    <div class="container">
+        <h1>1:1 화상채팅</h1>
+
+        <div class="join_room">
+            <input type="text" id="nameInput" placeholder="닉네임을 입력하세요">
+            <input type="text" id="roomInput" placeholder="방 번호를 입력하세요">
+            <button id="joinBtn">입장</button>
+        </div>
+
+        <div class="video_section">
+
+            <div class="videoBox">
+                <h2 id="myVideo">나</h2>
+                <video id="localVideo" autoplay playsinline muted></video>
+                <div id="localStatus" class="status"></div>
+            </div>
+
+            <div class="videoBox">
+                <h2 id="otherVideo">상대</h2>
+                <video id="remoteVideo" autoplay playsinline></video>
+                <div id="remoteStatus" class="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+    <script src="./mediapipe.js"></script>
+
+    <script src="./main.js"></script>
+
+</body>
+
+</html>
