@@ -145,6 +145,7 @@ joinBtn.addEventListener("click", async() => {
 
     document.querySelector(".join_room").style.display = "none"
     document.querySelector(".video_section").classList.add("active_flex")
+    console.log("화면 전환 완료")
 
     // 카메라화면이 출력되고 미디어파이프 시작
     startPose(localVideo)
