@@ -143,7 +143,7 @@ joinBtn.addEventListener("click", async() => {
     const mediaSuccess = await startMedia()
     if(!mediaSuccess) return
 
-    document.querySelector(".join_room").computedStyleMap.display = "none"
+    document.querySelector(".join_room").style.display = "none"
     document.querySelector(".video_section").classList.add("active_flex")
 
     // 카메라화면이 출력되고 미디어파이프 시작
