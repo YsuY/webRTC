@@ -45,6 +45,7 @@ async function startMedia() {
 
         localVideo.srcObject = localStream
         console.log("카메라, 마이크 연결 완료")
+        return true
     } catch (error) {
         console.log("마이크, 카메라 오류: ", error)
         alert("카메라와 마이크 권한을 허용해주세요")
